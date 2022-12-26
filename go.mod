@@ -1,4 +1,4 @@
-module github.com/cloudwebrtc/go-sip-ua
+module github.com/dmitry-kovalev/go-sip-ua
 
 go 1.13
 
