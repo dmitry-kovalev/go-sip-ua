@@ -3,13 +3,12 @@ module github.com/dmitry-kovalev/go-sip-ua
 go 1.13
 
 require (
-	cloud.google.com/go/firestore v1.5.0 // indirect
 	firebase.google.com/go v3.13.0+incompatible
+	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/c-bata/go-prompt v0.2.6
-	github.com/ghettovoice/gosip v0.0.0-20211014110559-f0c4b77a298b
+	github.com/cloudwebrtc/go-sip-ua v1.1.6
+	github.com/ghettovoice/gosip v0.0.0-20221216110459-a49cda0b8a0f
 	github.com/google/uuid v1.3.0
-	github.com/kr/pretty v0.2.0 // indirect
-	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/pixelbender/go-sdp v1.1.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tevino/abool v1.2.0

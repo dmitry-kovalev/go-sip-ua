@@ -6,17 +6,17 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/cloudwebrtc/go-sip-ua/pkg/account"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/auth"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/session"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/stack"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/account"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/auth"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/session"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/stack"
 
 	"github.com/ghettovoice/gosip/log"
 	"github.com/ghettovoice/gosip/sip"
 	"github.com/ghettovoice/gosip/transaction"
 	"github.com/ghettovoice/gosip/util"
 
-	"github.com/cloudwebrtc/go-sip-ua/pkg/utils"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/utils"
 )
 
 // SessionKey - Session Key for Session Storage
@@ -38,13 +38,13 @@ type UserAgentConfig struct {
 	SipStack *stack.SipStack
 }
 
-//InviteSessionHandler .
+// InviteSessionHandler .
 type InviteSessionHandler func(s *session.Session, req *sip.Request, resp *sip.Response, status session.Status)
 
-//RegisterHandler .
+// RegisterHandler .
 type RegisterHandler func(regState account.RegisterState)
 
-//UserAgent .
+// UserAgent .
 type UserAgent struct {
 	InviteStateHandler   InviteSessionHandler
 	RegisterStateHandler RegisterHandler
@@ -53,7 +53,7 @@ type UserAgent struct {
 	log                  log.Logger
 }
 
-//NewUserAgent .
+// NewUserAgent .
 func NewUserAgent(config *UserAgentConfig) *UserAgent {
 	ua := &UserAgent{
 		config:               config,
@@ -126,7 +126,7 @@ func (ua *UserAgent) buildRequest(
 		return nil, err
 	}
 
-	//ua.Log().Infof("buildRequest %s => \n%v", method, req)
+	// ua.Log().Infof("buildRequest %s => \n%v", method, req)
 	return &req, nil
 }
 
@@ -421,7 +421,7 @@ func (ua *UserAgent) RequestWithContext(ctx context.Context, request sip.Request
 					}
 				}
 
-				//errs <- err
+				// errs <- err
 				return
 			case response, ok := <-tx.Responses():
 				if !ok {
@@ -505,10 +505,10 @@ func (ua *UserAgent) RequestWithContext(ctx context.Context, request sip.Request
 					}
 				}
 			case err := <-errs:
-				//TODO: error type switch transaction.TxTimeoutError
+				// TODO: error type switch transaction.TxTimeoutError
 				switch err.(type) {
 				case *transaction.TxTimeoutError:
-					//errs <- sip.NewRequestError(408, "Request Timeout", nil, nil)
+					// errs <- sip.NewRequestError(408, "Request Timeout", nil, nil)
 					return nil, err
 				}
 				request := (err.(*sip.RequestError)).Request

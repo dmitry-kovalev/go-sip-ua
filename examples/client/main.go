@@ -1,22 +1,21 @@
 package main
 
 import (
+	nested "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/account"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/media/rtp"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/session"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/stack"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/ua"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/utils"
+	"github.com/ghettovoice/gosip/log"
+	"github.com/ghettovoice/gosip/sip"
+	"github.com/ghettovoice/gosip/sip/parser"
+	"github.com/sirupsen/logrus"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
-
-	"github.com/cloudwebrtc/go-sip-ua/examples/mock"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/account"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/media/rtp"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/session"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/stack"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/ua"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/utils"
-	"github.com/ghettovoice/gosip/log"
-	"github.com/ghettovoice/gosip/sip"
-	"github.com/ghettovoice/gosip/sip/parser"
 )
 
 var (
@@ -45,6 +44,14 @@ func createUdp() *rtp.RtpUDPStream {
 func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+	logger := logrus.New()
+	logger.SetFormatter(&nested.Formatter{
+		HideKeys:        true,
+		FieldsOrder:     []string{"component"},
+		NoColors:        false,
+		TimestampFormat: "15:04:05",
+	})
+
 	stack := stack.NewSipStack(&stack.SipStackConfig{
 		UserAgent:  "Go Sip Client/example-client",
 		Extensions: []string{"replaces", "outbound"},
@@ -56,14 +63,14 @@ func main() {
 	if err := stack.Listen("udp", listen); err != nil {
 		logger.Panic(err)
 	}
-
-	if err := stack.Listen("tcp", listen); err != nil {
-		logger.Panic(err)
-	}
-
-	if err := stack.ListenTLS("wss", "0.0.0.0:5091", nil); err != nil {
-		logger.Panic(err)
-	}
+	//
+	// if err := stack.Listen("tcp", listen); err != nil {
+	// 	logger.Panic(err)
+	// }
+	//
+	// if err := stack.ListenTLS("wss", "0.0.0.0:5091", nil); err != nil {
+	// 	logger.Panic(err)
+	// }
 
 	ua := ua.NewUserAgent(&ua.UserAgentConfig{
 		SipStack: stack,
@@ -74,17 +81,17 @@ func main() {
 
 		switch state {
 		case session.InviteReceived:
-			udp = createUdp()
-			udpLaddr := udp.LocalAddr()
-			sdp := mock.BuildLocalSdp(udpLaddr.IP.String(), udpLaddr.Port)
-			sess.ProvideAnswer(sdp)
-			sess.Accept(200)
+			// udp = createUdp()
+			// udpLaddr := udp.LocalAddr()
+			// sdp := mock.BuildLocalSdp(udpLaddr.IP.String(), udpLaddr.Port)
+			// sess.ProvideAnswer(sdp)
+			// sess.Accept(200)
+			sess.Provisional(180, "ringing")
 		case session.Canceled:
 			fallthrough
 		case session.Failure:
 			fallthrough
 		case session.Terminated:
-			udp.Close()
 		}
 	}
 
@@ -92,44 +99,44 @@ func main() {
 		logger.Infof("RegisterStateHandler: user => %s, state => %v, expires => %v", state.Account.AuthInfo.AuthUser, state.StatusCode, state.Expiration)
 	}
 
-	uri, err := parser.ParseUri("sip:100@127.0.0.1")
+	uri, err := parser.ParseUri("sip:703@ai001093.aicall.ru")
 	if err != nil {
 		logger.Error(err)
 	}
 
 	profile := account.NewProfile(uri.Clone(), "goSIP/example-client",
 		&account.AuthInfo{
-			AuthUser: "100",
-			Password: "100",
-			Realm:    "",
+			AuthUser: "703",
+			Password: "lkdasflkjfdsalkfdsa;lkjds",
+			Realm:    "ai001093.aicall.ru",
 		},
 		1800,
 		stack,
 	)
 
-	recipient, err := parser.ParseSipUri("sip:100@127.0.0.1:5081;transport=wss")
+	recipient, err := parser.ParseSipUri("sip:ssw.aicall.ru:5060")
 	if err != nil {
 		logger.Error(err)
 	}
 
 	register, _ := ua.SendRegister(profile, recipient, profile.Expires, nil)
-	time.Sleep(time.Second * 3)
+	// time.Sleep(time.Second * 3)
 
-	udp = createUdp()
-	udpLaddr := udp.LocalAddr()
-	sdp := mock.BuildLocalSdp(udpLaddr.IP.String(), udpLaddr.Port)
-
-	called, err2 := parser.ParseUri("sip:400@127.0.0.1")
-	if err2 != nil {
-		logger.Error(err)
-	}
-
-	recipient, err = parser.ParseSipUri("sip:400@127.0.0.1:5081;transport=wss")
-	if err != nil {
-		logger.Error(err)
-	}
-
-	go ua.Invite(profile, called, recipient, &sdp)
+	// udp = createUdp()
+	// udpLaddr := udp.LocalAddr()
+	// sdp := mock.BuildLocalSdp(udpLaddr.IP.String(), udpLaddr.Port)
+	//
+	// called, err2 := parser.ParseUri("sip:400@127.0.0.1")
+	// if err2 != nil {
+	// 	logger.Error(err)
+	// }
+	//
+	// recipient, err = parser.ParseSipUri("sip:400@127.0.0.1:5081;transport=wss")
+	// if err != nil {
+	// 	logger.Error(err)
+	// }
+	//
+	// go ua.Invite(profile, called, recipient, &sdp)
 
 	<-stop
 

@@ -3,8 +3,8 @@ package account
 import (
 	"fmt"
 
-	"github.com/cloudwebrtc/go-sip-ua/pkg/stack"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/utils"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/stack"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/utils"
 	"github.com/ghettovoice/gosip/log"
 	"github.com/ghettovoice/gosip/sip"
 	"github.com/ghettovoice/gosip/sip/parser"
@@ -19,7 +19,7 @@ func init() {
 	logger = utils.NewLogrusLogger(log.DebugLevel, "UserAgent", nil)
 }
 
-//AuthInfo .
+// AuthInfo .
 type AuthInfo struct {
 	AuthUser string
 	Realm    string
@@ -60,13 +60,13 @@ func (p *Profile) Contact() *sip.Address {
 		contact.Params.Add(key, sip.String{Str: value})
 	}
 
-	//TODO: Add more necessary parameters.
-	//etc: ip:port, transport=udp|tcp, +sip.ice, +sip.instance, +sip.pnsreg,
+	// TODO: Add more necessary parameters.
+	// etc: ip:port, transport=udp|tcp, +sip.ice, +sip.instance, +sip.pnsreg,
 
 	return contact
 }
 
-//NewProfile .
+// NewProfile .
 func NewProfile(
 	uri sip.Uri,
 	displayName string,
@@ -104,7 +104,7 @@ func NewProfile(
 	return p
 }
 
-//RegisterState .
+// RegisterState .
 type RegisterState struct {
 	Account    *Profile
 	StatusCode sip.StatusCode

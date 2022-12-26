@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloudwebrtc/go-sip-ua/pkg/auth"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/auth"
 	"github.com/tevino/abool"
 
-	"github.com/cloudwebrtc/go-sip-ua/pkg/utils"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/utils"
 	"github.com/ghettovoice/gosip/log"
 	"github.com/ghettovoice/gosip/sip"
 	"github.com/ghettovoice/gosip/transaction"
@@ -291,7 +291,7 @@ func (s *SipStack) handleRequest(req sip.Request, tx sip.ServerTransaction) {
 	go handler(req, tx)
 }
 
-//Request Send SIP message
+// Request Send SIP message
 func (s *SipStack) Request(req sip.Request) (sip.ClientTransaction, error) {
 	if !s.running.IsSet() {
 		return nil, fmt.Errorf("can not send through stopped server")
