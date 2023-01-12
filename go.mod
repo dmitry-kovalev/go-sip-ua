@@ -6,7 +6,6 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/c-bata/go-prompt v0.2.6
-	github.com/cloudwebrtc/go-sip-ua v1.1.6
 	github.com/ghettovoice/gosip v0.0.0-20221216110459-a49cda0b8a0f
 	github.com/google/uuid v1.3.0
 	github.com/pixelbender/go-sdp v1.1.0

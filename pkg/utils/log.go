@@ -75,3 +75,7 @@ func SetLogLevel(prefix string, level log.Level) error {
 func GetLoggers() map[string]*MyLogger {
 	return loggers
 }
+
+func SetLoggers(l map[string]*MyLogger) {
+	loggers = l
+}

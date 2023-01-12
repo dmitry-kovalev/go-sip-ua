@@ -23,10 +23,6 @@ var (
 	udp    *rtp.RtpUDPStream
 )
 
-func init() {
-	logger = utils.NewLogrusLogger(log.DebugLevel, "Client", nil)
-}
-
 func createUdp() *rtp.RtpUDPStream {
 
 	udp = rtp.NewRtpUDPStream("127.0.0.1", rtp.DefaultPortMin, rtp.DefaultPortMax, func(data []byte, raddr net.Addr) {
@@ -44,14 +40,29 @@ func createUdp() *rtp.RtpUDPStream {
 func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
-	logger := logrus.New()
-	logger.SetFormatter(&nested.Formatter{
+	customLogger := logrus.New()
+	customLogger.SetFormatter(&nested.Formatter{
 		HideKeys:        true,
 		FieldsOrder:     []string{"component"},
 		NoColors:        false,
-		TimestampFormat: "15:04:05",
+		TimestampFormat: "2006-01-02 15:04:05",
 	})
-
+	customLogger.SetLevel(logrus.InfoLevel)
+	logger = log.NewLogrusLogger(customLogger, "Client", nil)
+	loggers := make(map[string]*utils.MyLogger)
+	loggers["SipStack"] = &utils.MyLogger{
+		Logger: log.NewLogrusLogger(customLogger, "SipStack", nil),
+	}
+	loggers["transport.Layer"] = &utils.MyLogger{
+		Logger: log.NewLogrusLogger(customLogger, "transport.Layer", nil),
+	}
+	loggers["transaction.Layer"] = &utils.MyLogger{
+		Logger: log.NewLogrusLogger(customLogger, "transaction.Layer", nil),
+	}
+	loggers["UserAgent"] = &utils.MyLogger{
+		Logger: log.NewLogrusLogger(customLogger, "UserAgent", nil),
+	}
+	utils.SetLoggers(loggers)
 	stack := stack.NewSipStack(&stack.SipStackConfig{
 		UserAgent:  "Go Sip Client/example-client",
 		Extensions: []string{"replaces", "outbound"},
@@ -107,14 +118,14 @@ func main() {
 	profile := account.NewProfile(uri.Clone(), "goSIP/example-client",
 		&account.AuthInfo{
 			AuthUser: "703",
-			Password: "lkdasflkjfdsalkfdsa;lkjds",
-			Realm:    "ai001093.aicall.ru",
+			Password: "secret_password",
+			Realm:    "my.sip.domain",
 		},
 		1800,
 		stack,
 	)
 
-	recipient, err := parser.ParseSipUri("sip:ssw.aicall.ru:5060")
+	recipient, err := parser.ParseSipUri("sip:my.sip.domain:5060")
 	if err != nil {
 		logger.Error(err)
 	}

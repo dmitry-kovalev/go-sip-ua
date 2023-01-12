@@ -3,16 +3,16 @@ package b2bua
 import (
 	"fmt"
 
-	"github.com/cloudwebrtc/go-sip-ua/examples/b2bua/fcm"
-	"github.com/cloudwebrtc/go-sip-ua/examples/b2bua/pushkit"
-	"github.com/cloudwebrtc/go-sip-ua/examples/b2bua/registry"
+	"github.com/dmitry-kovalev/go-sip-ua/examples/b2bua/fcm"
+	"github.com/dmitry-kovalev/go-sip-ua/examples/b2bua/pushkit"
+	"github.com/dmitry-kovalev/go-sip-ua/examples/b2bua/registry"
 
-	"github.com/cloudwebrtc/go-sip-ua/pkg/account"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/auth"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/session"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/stack"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/ua"
-	"github.com/cloudwebrtc/go-sip-ua/pkg/utils"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/account"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/auth"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/session"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/stack"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/ua"
+	"github.com/dmitry-kovalev/go-sip-ua/pkg/utils"
 	"github.com/ghettovoice/gosip/log"
 	"github.com/ghettovoice/gosip/sip"
 	"github.com/ghettovoice/gosip/sip/parser"
@@ -21,7 +21,7 @@ import (
 
 type B2BCall struct {
 	src *session.Session
-	//TODO: Add support for forked calls
+	// TODO: Add support for forked calls
 	dest *session.Session
 }
 
@@ -61,7 +61,7 @@ func init() {
 	logger = utils.NewLogrusLogger(log.InfoLevel, "B2BUA", nil)
 }
 
-//NewB2BUA .
+// NewB2BUA .
 func NewB2BUA(disableAuth bool, enableTLS bool) *B2BUA {
 	b := &B2BUA{
 		registry: registry.Registry(registry.NewMemoryRegistry()),
@@ -181,7 +181,7 @@ func NewB2BUA(disableAuth bool, enableTLS bool) *B2BUA {
 			case session.Incoming:
 				sess.Accept(200)
 			case session.Outgoing:
-				//TODO: Need to provide correct answer.
+				// TODO: Need to provide correct answer.
 			}
 
 		// Handle 1XX
@@ -197,7 +197,7 @@ func NewB2BUA(disableAuth bool, enableTLS bool) *B2BUA {
 
 		// Handle 200OK or ACK
 		case session.Confirmed:
-			//TODO: Add support for forked calls
+			// TODO: Add support for forked calls
 			call := b.findCall(sess)
 			if call != nil && call.dest == sess {
 				answer := call.dest.RemoteSdp()
@@ -211,7 +211,7 @@ func NewB2BUA(disableAuth bool, enableTLS bool) *B2BUA {
 		case session.Canceled:
 			fallthrough
 		case session.Terminated:
-			//TODO: Add support for forked calls
+			// TODO: Add support for forked calls
 			call := b.findCall(sess)
 			if call != nil {
 				if call.src == sess {
@@ -257,19 +257,19 @@ func (b *B2BUA) removeCall(sess *session.Session) {
 	}
 }
 
-//Shutdown .
+// Shutdown .
 func (b *B2BUA) Shutdown() {
 	b.ua.Shutdown()
 }
 
 func (b *B2BUA) requiresChallenge(req sip.Request) bool {
 	switch req.Method() {
-	//case sip.UPDATE:
+	// case sip.UPDATE:
 	case sip.REGISTER:
 		return true
 	case sip.INVITE:
 		return true
-	//case sip.RREFER:
+	// case sip.RREFER:
 	//	return false
 	case sip.CANCEL:
 		return false
@@ -287,22 +287,22 @@ func (b *B2BUA) requiresChallenge(req sip.Request) bool {
 	return false
 }
 
-//AddAccount .
+// AddAccount .
 func (b *B2BUA) AddAccount(username string, password string) {
 	b.accounts[username] = password
 }
 
-//GetAccounts .
+// GetAccounts .
 func (b *B2BUA) GetAccounts() map[string]string {
 	return b.accounts
 }
 
-//GetRegistry .
+// GetRegistry .
 func (b *B2BUA) GetRegistry() registry.Registry {
 	return b.registry
 }
 
-//GetRFC8599 .
+// GetRFC8599 .
 func (b *B2BUA) GetRFC8599() *registry.RFC8599 {
 	return b.rfc8599
 }
